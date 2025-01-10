@@ -9,9 +9,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { addChannel, removeChannel } from "@/server/mutations";
 import { getUserChannles } from "@/server/queries";
-import AddChannel from "./AddChannel";
-import { useEffect } from "react";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ScrollArea } from "./ui/scroll-area";
 
 const Settings = ({
   open,
@@ -20,13 +22,21 @@ const Settings = ({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const [channels, setChannels] = useState<any[]>([]);
+  const [newChannel, setNewChannel] = useState("");
+
   useEffect(() => {
     fetchChannels();
   }, []);
 
   const fetchChannels = async () => {
-    const channels = await getUserChannles();
-    console.log(channels);
+    const userChannels = await getUserChannles();
+    setChannels(userChannels);
+  };
+
+  const addNewChannel = async () => {
+    const channel = await addChannel(newChannel);
+    if (channel) setChannels([...channels, channel]);
   };
 
   return (
@@ -38,7 +48,36 @@ const Settings = ({
             Add New Channel
           </DialogTitle>
         </DialogHeader>
-        <AddChannel />
+        <div>
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="Add Channel Name"
+              className="border-neutral-500 outline-none"
+              onChange={(e) => setNewChannel(e.target.value)}
+            />
+            <Button onClick={addNewChannel}>+Add</Button>
+          </div>
+          <p className="my-10">Saved Channels</p>
+          <ScrollArea className="h-[300px]">
+            {channels.length > 0 ? (
+              <div>
+                {channels.map(({ name, Id }, idx) => (
+                  <div key={idx} className="p-5 border my-2">
+                    <div className="flex items-center justify-between">
+                      <p>{name}</p>
+                      <X
+                        onClick={() => removeChannel(Id)}
+                        className="cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center mt-[100px]">Loading...</p>
+            )}
+          </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
