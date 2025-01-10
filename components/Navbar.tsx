@@ -4,22 +4,22 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import Settings from "./Settings";
 
 const Links = [
   { name: "Videos", href: "/videos" },
   { name: "Ideas", href: "/ideas" },
-  { name: "Settings", href: "/settings" },
 ];
 
 const Navbar = () => {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
-  console.log(user);
   const [selectedLink, setSelectedLink] = useState("");
+  const [open, setOpen] = useState(false);
   return (
     <div className="flex items-center p-8 px-10 justify-between">
       <div>
-        <Link href={"/"} onClick={()=>setSelectedLink("")}>
+        <Link href={"/"} onClick={() => setSelectedLink("")}>
           <h1 className="text-4xl">YT</h1>
         </Link>
       </div>
@@ -44,8 +44,24 @@ const Navbar = () => {
                 </div>
               </Link>
             ))}
+            <div className={`cursor-pointer pb-2`}>
+              <p
+                onClick={() => setOpen(true)}
+                className="text-xl cursor-pointer"
+              >
+                Settings
+              </p>
+            </div>
             <div>
-                {user && <Image className="rounded-full" src={user.imageUrl!} alt="avatar" width={40} height={40}/> } 
+              {user && (
+                <Image
+                  className="rounded-full"
+                  src={user.imageUrl!}
+                  alt="avatar"
+                  width={40}
+                  height={40}
+                />
+              )}
             </div>
           </div>
         ) : (
@@ -58,6 +74,7 @@ const Navbar = () => {
           </div>
         )}
       </div>
+      <Settings open={open} setOpen={setOpen} />
     </div>
   );
 };

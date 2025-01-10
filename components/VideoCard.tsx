@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
 
 const VideoCard = () => {
@@ -16,7 +11,7 @@ const VideoCard = () => {
           src="/image.jpeg"
           layout="fill"
           objectFit="cover"
-          className="rounded-t-md" // Optional: for rounded corners
+          className="rounded-t-md"  
         />
       </CardHeader>
       <CardFooter className="mt-5 flex items-start">
