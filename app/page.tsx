@@ -1,10 +1,10 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+import Hero from "@/components/Hero";
 
 const Home = () => {
   return (
     <div>
-      <Button>Hello</Button>
+      <Hero/>
     </div>
   );
 };
