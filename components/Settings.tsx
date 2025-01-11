@@ -9,8 +9,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { addChannel, removeChannel } from "@/server/mutations";
-import { getUserChannles } from "@/server/queries";
+import { addChannelForUser, removeChannelForUser } from "@/server/mutations";
+import { getChannels } from "@/server/queries";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "./ui/scroll-area";
@@ -30,13 +30,21 @@ const Settings = ({
   }, []);
 
   const fetchChannels = async () => {
-    const userChannels = await getUserChannles();
+    const userChannels = await getChannels();
     setChannels(userChannels);
   };
 
   const addNewChannel = async () => {
-    const channel = await addChannel(newChannel);
+    const channel = await addChannelForUser(newChannel);
     if (channel) setChannels([...channels, channel]);
+  };
+
+  const removeChannel = async (Id : string) => {
+    const removed_channels = await removeChannelForUser(Id);
+    if(removed_channels) {
+      const new_channels = channels.filter((channel) => channel.Id != removed_channels.Id)
+      setChannels(new_channels);
+    }
   };
 
   return (

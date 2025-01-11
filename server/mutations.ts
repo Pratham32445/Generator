@@ -5,34 +5,27 @@ import { db } from "./db/drizzle";
 import { YoutubeChannels } from "./db/schema";
 import { and, eq } from "drizzle-orm";
 
-export const addChannel = async (name: string) => {
+export const addChannelForUser = async (channelName: string) => {
   const { userId } = await auth();
 
-  if (!userId) {
-    throw new Error("User not Authenticated");
-  }
+  if (!userId) throw new Error("user not authenticated");
 
-  const res = await db
+  const [new_channel] = await db
     .insert(YoutubeChannels)
     .values({
-      name,
+      name: channelName,
       userId,
     })
     .returning();
 
-  return res[0];
+  return new_channel;
 };
 
-export const removeChannel = async (Id: string) => {
+export const removeChannelForUser = async (Id: string) => {
   const { userId } = await auth();
-
-  if (!userId) {
-    throw new Error("User not Authenticated");
-  }
-  const channel = await db
+  if (!userId) throw new Error("User Not Authenticated");
+  const [removed_channel] = await db
     .delete(YoutubeChannels)
-    .where(and(eq(YoutubeChannels.Id, Id), eq(YoutubeChannels.userId, userId)))
-    .returning();
-
-  console.log(channel);
+    .where(and(eq(YoutubeChannels.Id, Id), eq(YoutubeChannels.userId, userId))).returning();
+  return removed_channel
 };
